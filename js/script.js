@@ -6,10 +6,12 @@ const guessesRemainingElement = document.querySelector(".remaining");
 const guessesRemainingSpan = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const retryButton = document.querySelector(".play-again");
+const formLabel = document.querySelector("form label");
 
-let remainingGuesses = 8;
+const defaultGuesses = 8;
+let remainingGuesses = defaultGuesses;
 let word = "magnolia";
-const guessedLetters = [];
+let guessedLetters = [];
 
 async function getWord() {
 	const request = await fetch("https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt");
@@ -108,6 +110,7 @@ function countGuesses(guess) {
 
 	if (remainingGuesses === 0) {
     	message.innerHTML = `Game over! The word was <span class="highlight">${word}</span>.`;
+    	startOver();
   	} else if (remainingGuesses === 1) {
    		guessesRemainingSpan.innerText = `${remainingGuesses} guess`;
   	} else {
@@ -119,5 +122,34 @@ function hasWon() {
 	if (word.toUpperCase() === theWord.innerText) {
 		message.classList.add("win");
     	message.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+
+    	startOver();
 	}
 }
+
+function startOver() {
+	guessButton.classList.add("hide");
+	guessesRemainingElement.classList.add("hide");
+	guessedList.classList.add("hide");
+	formLabel.classList.add("hide");
+	playerInput.classList.add("hide");
+	retryButton.classList.remove("hide");
+}
+
+retryButton.addEventListener("click", function () {
+  	message.classList.remove("win");
+  	guessedLetters = [];
+  	remainingGuesses = defaultGuesses;
+  	guessesRemainingSpan.innerText = `${remainingGuesses} guesses`;
+  	guessedList.innerHTML = "";
+  	message.innerText = "";
+
+	getWord();
+
+  	guessButton.classList.remove("hide");
+  	guessesRemainingElement.classList.remove("hide");
+  	guessedList.classList.remove("hide");
+  	formLabel.classList.remove("hide");
+  	playerInput.classList.remove("hide");
+  	retryButton.classList.add("hide");
+});
